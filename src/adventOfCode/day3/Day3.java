@@ -15,28 +15,19 @@ public class Day3 {
 	
 	
 	public static int part1 (int input) {
-		int answer = 0;
-		double closestSquare = 1;
-		int count = 1;
-		int row = 0;
-			
-		while(input > closestSquare) {
-			
-			closestSquare = Math.pow(count, 2);
-			count += 2;
-			row++;
-		}
-		
-		
-		
-		answer = count;
-		
-		return answer;
+		return input; 
 	}
 	
 	
 	public static int part2 (int input) {
 		int answer = 0;
+
+		int top;
+		int right;
+		int bottom;
+		int left;
+		int center = 1;
+		
 		
 		
 		return answer;
