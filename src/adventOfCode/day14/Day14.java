@@ -4,14 +4,42 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import adventOfCode.day14.Day14.Node;
+
 public class Day14 {
+	
+	static class Node {
+		
+		int data;
+		boolean visited;
+		private List<Node> neighbors; 
+		
+		Node (int data) {
+			this.data = data;
+			this.neighbors = new ArrayList<>();
+		}
+		
+		public void addNeighbor (Node neighbor) {
+			this.neighbors.add(neighbor);
+		}
+		
+		public List<Node> getNeighbors() {
+			return neighbors;
+		}
+		
+		public void setNeighbors (List<Node> neighbors) {
+			this.neighbors = neighbors;
+		}
+		
+	}
 
 	public static void main(String[] args) {
 		
-		//String input = "vbqugkhl";
+		String input = "vbqugkhl";
 		//String input = "a0c20170";
-		String input = "flqrgnkx";
+		//String input = "flqrgnkx";
 
+		
 		
 		System.out.println(part1(input));
 	}
@@ -40,34 +68,140 @@ public class Day14 {
 			
 			//System.out.println(binary);
 			String[] stringArr = binary.split("");
+			//System.out.println(stringArr.length);
 			binaryGrid.add(stringArr);
 			binary = binary.replace("0", "");
 			
 			sum += binary.length();								
 		}
+
+		//System.out.println(binaryGrid.size());
+		System.out.println(part2(binaryGrid));
+		
+		return sum;
+	}
+	
+	
+	static int part2(List<String[]> binaryGrid) {
+		List<List<Node>> grid = new ArrayList<>();
+		
+		for (String[] row : binaryGrid) {	// make node grid
+			List<Node> nodeList = new ArrayList<>();
+			
+			for (int i = 0; i < row.length; i++) {
+				Node n = new Node(Integer.parseInt(row[i]));				
+				nodeList.add(n);				
+			}
+			grid.add(nodeList);
+		}
+		
+		for (int i = 0; i < grid.size(); i++) { //set neighbors
+			List<Node> nodeRow = grid.get(i);
+			
+			for (int j = 0 ; j < nodeRow.size(); j++) {
+				Node n = nodeRow.get(j);
+				
+				if (i == 0 && j == 0) { //top left corner
+					n.addNeighbor(grid.get(i).get(j+1));
+					n.addNeighbor(grid.get(i+1).get(j));
+				}
+				
+				if (i == 0 && j == nodeRow.size()-1) { // top right corner
+					n.addNeighbor(grid.get(i).get(j-1));
+					n.addNeighbor(grid.get(i+1).get(j));
+				}
+				
+				if (i == 0 && (j != 0 && j != nodeRow.size()-1) ) { //top row
+					n.addNeighbor(grid.get(i).get(j+1));
+					n.addNeighbor(grid.get(i).get(j-1));
+					n.addNeighbor(grid.get(i+1).get(j));				
+				}
+				
+				if ( (i !=0 && i != grid.size()-1) && j == 0) { //first node in most rows
+					n.addNeighbor(grid.get(i).get(j+1));
+					n.addNeighbor(grid.get(i+1).get(j));
+					n.addNeighbor(grid.get(i-1).get(j));
+				}
+				
+				if ( (i !=0 && i != grid.size()-1) && j == nodeRow.size()-1) { //last node in most rows
+					n.addNeighbor(grid.get(i).get(j-1));
+					n.addNeighbor(grid.get(i+1).get(j));
+					n.addNeighbor(grid.get(i-1).get(j));
+				}
+				
+				if ( (i !=0 && i != grid.size()-1) && (j != 0 && j != nodeRow.size()-1) ) { //everything in between
+					n.addNeighbor(grid.get(i).get(j+1));
+					n.addNeighbor(grid.get(i).get(j-1));
+					n.addNeighbor(grid.get(i+1).get(j));
+					n.addNeighbor(grid.get(i-1).get(j));
+				}
+				
+				if (i == grid.size()-1 && j == 0 ) { //bottom left corner
+					n.addNeighbor(grid.get(i).get(j+1));
+					n.addNeighbor(grid.get(i-1).get(j));				
+				}
+				
+				if (i == grid.size()-1 && j == nodeRow.size()-1 ) { //bottom right corner
+					n.addNeighbor(grid.get(i).get(j-1));
+					n.addNeighbor(grid.get(i-1).get(j));				
+				}
+				
+				if (i == grid.size()-1 && (j != 0 && j != nodeRow.size()-1) ) { //bottom row
+					n.addNeighbor(grid.get(i).get(j-1));
+					n.addNeighbor(grid.get(i).get(j+1));
+					n.addNeighbor(grid.get(i-1).get(j));				
+				}
+					
+			}
+		}
+		
+		for (List<Node> row : grid) {
+			for (int i = 0; i < row.size(); i++) {
+				System.out.print(row.get(i).data);
+			}
+			System.out.println("");
+		}
+		
+		System.out.println("");
 		
 		int groups = 0;
 		
-		for (int i = 0; i < binaryGrid.size(); i++) {
-			String[] s = binaryGrid.get(i);
+		for (List<Node> row : grid) {
 			
-			for (int j = 0; j < s.length; j++) {
-				
-				if (Integer.parseInt(s[j]) == 1) {
+			for (int j = 0 ; j < row.size(); j++) {
+							
+				if (row.get(j).data == 1 && row.get(j).visited == false) {
 					
+					dfs(row.get(j));
+					groups++;
+					System.out.println("\nnumber of groups is " + groups);
 					
-					
-				}
-				
-				
-				
+				} else if (row.get(j).data == 0) row.get(j).visited = true;
+									
 			}
-			
 		}
 		
-			
 		
-		return sum;
+		
+		System.out.println(grid.get(0).get(grid.get(0).size()-1).getNeighbors().get(1).data);
+		
+		return groups;
+	}
+	
+	static void dfs (Node node) {
+		System.out.print(node.data);
+		List<Node> neighbors = node.getNeighbors();
+		node.visited = true;
+		
+		for (int i = 0; i < neighbors.size(); i++) {
+			Node n = neighbors.get(i);
+			
+			
+			if (n != null && n.visited == false && n.data == 1) {
+				
+				dfs(n);
+			}
+		}		
 	}
 	
 	
@@ -166,5 +300,10 @@ public class Day14 {
 		}		
 		return hex;
 	}
+	
+
 
 }
+
+
+

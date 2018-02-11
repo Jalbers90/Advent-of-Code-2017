@@ -283,8 +283,7 @@ static long part2(List<String> input) {
 	}
 	
 
-	public static boolean isNumeric(String str)  
-	{  
+	public static boolean isNumeric(String str)  {  
 	  try  
 	  {  
 	    Long d = Long.parseLong(str); 
